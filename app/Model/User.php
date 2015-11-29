@@ -206,7 +206,7 @@ class User extends AppModel {
 		return true;
 	}
 	
-	public function beforeSave(){
+	public function beforeSave($options = array()){
 
 		if( !$this->id )
 			$this->data[ $this->name ][ 'password' ] = AuthComponent::password( '123456' );

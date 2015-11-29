@@ -54,11 +54,13 @@ class FrontEndHelper extends AppHelper {
 	}
 
 	public function getHeader( &$controller, $action, $subtitle = null ){
-		
+	
 		if( !$this->Session->check( "Auth.User.Profile" ) )
 			return $this->output( "" );
 		
-		$permissions = &$this->Session->read( "Auth.User.Profile" );
+		$session_profile = $this->Session->read( "Auth.User.Profile" );
+
+		$permissions = &$session_profile;
 
 		$tagOpen = '<div class="page-header"><h1>';
 		$tagClose = '</h1></div>';
@@ -76,8 +78,13 @@ class FrontEndHelper extends AppHelper {
 	public function getMenu(){
 		
 		$string = '';
-		$areas = &$this->Session->read( "Auth.User.Menu" );
-		$permissions = &$this->Session->read( "Auth.User.Profile" );
+
+		$session_menu = !empty($this->Session->read( "Auth.User.Menu" )) ? $this->Session->read( "Auth.User.Menu" ): array() ; 
+		$areas = &$session_menu;
+
+		$session_profile = !empty($this->Session->read( "Auth.User.Profile" )) ? $this->Session->read( "Auth.User.Profile" ):array();
+
+		$permissions = &$session_profile;
 		
 		foreach ($areas as $area) {
 
@@ -112,7 +119,10 @@ class FrontEndHelper extends AppHelper {
 		if( !empty( $submenu ) ){
 		
 			$string			= "";
-			$permissions	= &$this->Session->read( "Auth.User.Profile" );
+
+			$session_profile = $this->Session->read( "Auth.User.Profile" ); 
+
+			$permissions	= &$session_profile;
 			
 			if( !empty( $permissions[ $controllerName ] ) ){
 		

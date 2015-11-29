@@ -4,19 +4,18 @@
  *
  * Test Case for project generation shell task
  *
- * PHP 5
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.3.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -93,11 +92,11 @@ class ProjectTaskTest extends CakeTestCase {
 			'Console' . DS . 'Templates',
 			'Console' . DS . 'Command' . DS . 'Task',
 			'Controller',
-			'Controller' . DS. 'Component',
+			'Controller' . DS . 'Component',
 			'Locale',
 			'Model',
-			'Model' . DS. 'Behavior',
-			'Model' . DS. 'Datasource',
+			'Model' . DS . 'Behavior',
+			'Model' . DS . 'Datasource',
 			'Plugin',
 			'Test',
 			'Test' . DS . 'Case',
@@ -141,16 +140,16 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->execute();
 
 		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
-		$File = new File($path . DS  . 'webroot' . DS . 'index.php');
+		$File = new File($path . DS . 'webroot' . DS . 'index.php');
 		$contents = $File->read();
 		$this->assertRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
-		$File = new File($path . DS  . 'webroot' . DS . 'test.php');
+		$File = new File($path . DS . 'webroot' . DS . 'test.php');
 		$contents = $File->read();
 		$this->assertRegExp('/define\(\'CAKE_CORE_INCLUDE_PATH\', .*?DS/', $contents);
 	}
 
 /**
- * test bake with CakePHP on the include path.  The constants should remain commented out.
+ * test bake with CakePHP on the include path. The constants should remain commented out.
  *
  * @return void
  */
@@ -167,10 +166,10 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->execute();
 
 		$this->assertTrue(is_dir($this->Task->args[0]), 'No project dir');
-		$contents = file_get_contents($path . DS  . 'webroot' . DS . 'index.php');
+		$contents = file_get_contents($path . DS . 'webroot' . DS . 'index.php');
 		$this->assertRegExp('#//define\(\'CAKE_CORE_INCLUDE_PATH#', $contents);
 
-		$contents = file_get_contents($path . DS  . 'webroot' . DS . 'test.php');
+		$contents = file_get_contents($path . DS . 'webroot' . DS . 'test.php');
 		$this->assertRegExp('#//define\(\'CAKE_CORE_INCLUDE_PATH#', $contents);
 
 		ini_set('include_path', $restore);
@@ -198,7 +197,6 @@ class ProjectTaskTest extends CakeTestCase {
 			'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper' => 'empty',
 			'Test' . DS . 'Fixture' => 'empty',
 			'Vendor' => 'empty',
-			'View' . DS . 'Elements' => 'empty',
 			'View' . DS . 'Scaffolds' => 'empty',
 			'tmp' . DS . 'cache' . DS . 'models' => 'empty',
 			'tmp' . DS . 'cache' . DS . 'persistent' => 'empty',
@@ -250,6 +248,24 @@ class ProjectTaskTest extends CakeTestCase {
 	}
 
 /**
+ * test generation of cache prefix
+ *
+ * @return void
+ */
+	public function testCachePrefixGeneration() {
+		$this->_setupTestProject();
+
+		$path = $this->Task->path . 'bake_test_app' . DS;
+		$result = $this->Task->cachePrefix($path);
+		$this->assertTrue($result);
+
+		$File = new File($path . 'Config' . DS . 'core.php');
+		$contents = $File->read();
+		$this->assertRegExp('/\$prefix = \'.+\';/', $contents, '$prefix is not defined');
+		$this->assertNotRegExp('/\$prefix = \'myapp_\';/', $contents, 'Default cache prefix left behind. %s');
+	}
+
+/**
  * Test that index.php is generated correctly.
  *
  * @return void
@@ -276,7 +292,7 @@ class ProjectTaskTest extends CakeTestCase {
 	public function testGetPrefix() {
 		Configure::write('Routing.prefixes', array('admin'));
 		$result = $this->Task->getPrefix();
-		$this->assertEquals($result, 'admin_');
+		$this->assertEquals('admin_', $result);
 
 		Configure::write('Routing.prefixes', null);
 		$this->_setupTestProject();
@@ -284,7 +300,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue('super_duper_admin'));
 
 		$result = $this->Task->getPrefix();
-		$this->assertEquals($result, 'super_duper_admin_');
+		$this->assertEquals('super_duper_admin_', $result);
 
 		$File = new File($this->Task->configPath . 'core.php');
 		$File->delete();
@@ -322,7 +338,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue(2));
 
 		$result = $this->Task->getPrefix();
-		$this->assertEquals($result, 'ninja_');
+		$this->assertEquals('ninja_', $result);
 	}
 
 /**
@@ -341,7 +357,7 @@ class ProjectTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		$this->assertTrue(is_dir($path), 'No project dir');
 		$this->assertTrue(is_dir($path . DS . 'Controller'), 'No controllers dir ');
-		$this->assertTrue(is_dir($path . DS . 'Controller' . DS .'Component'), 'No components dir ');
+		$this->assertTrue(is_dir($path . DS . 'Controller' . DS . 'Component'), 'No components dir ');
 		$this->assertTrue(is_dir($path . DS . 'Model'), 'No models dir');
 		$this->assertTrue(is_dir($path . DS . 'View'), 'No views dir');
 		$this->assertTrue(is_dir($path . DS . 'View' . DS . 'Helper'), 'No helpers dir');

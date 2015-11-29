@@ -8,7 +8,7 @@ $(document).ready( function(){
 });
 </script>
 
-<?= $this->Form->create( "User", array( "action" => "login", 'class' => 'well form-horizontal' ) ) ?>
+<?= $this->Form->create( "User", array( "action" => "login", 'class' => 'well form-horizontal','novalidate' ) ) ?>
 	
 	<div class="control-group">
 	<?php

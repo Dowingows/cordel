@@ -24,13 +24,12 @@ class MenuComponent extends Component {
 	 * Methods
 	 ----------------------------------------*/
 	
-	public function initialize( &$controller ){
+	public function initialize(Controller $controller ){
 		
 		$this->controller = &$controller;
 	}
 	
-	public function beforeRender( &$controller ){
-		
+	public function beforeRender(Controller $controller ){
 		//	setando a opcao selecionada do menu
 		if( !empty( $controller->setMenu ) ){
 			
@@ -55,7 +54,6 @@ class MenuComponent extends Component {
 						'conditions' => array( 'AreaChild.appear' => '1' ),
 						'fields' => array( 'controller', 'controller_label', 'action' )
 		) ) ) ) );
-		
 		$this->Session->write( 'Auth.User.Menu', $areas[ 'Area' ] );
 	}
 	
