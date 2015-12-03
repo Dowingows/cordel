@@ -27,6 +27,7 @@
 				    <ul class="dropdown-menu">
 				    	<li><?= $this->Html->link( '<i class="icon-off"></i> Sair', '/users/logout', array( 'escape' => false ) ) ?></li>
 						<li><?= $this->Html->link( '<i class="icon-user"></i> Meus dados', '/users/manageAccount', array( 'escape' => false ) ) ?></li>
+						<li><?= $this->Html->link( '<i class="icon-engine"></i> Configurações', '/Settings/', array( 'escape' => false ) ) ?></li>
 						<li class="divider"></li>
 						<li class="nav-header">Último Login</li>
 						<?php

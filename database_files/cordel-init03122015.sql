@@ -22,9 +22,9 @@ CREATE TABLE IF NOT EXISTS `areas` (
   PRIMARY KEY (`id`),
   KEY `appear` (`appear`),
   KEY `parent_id` (`parent_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Copiando dados para a tabela cordel.areas: ~12 rows (aproximadamente)
+-- Copiando dados para a tabela cordel.areas: ~13 rows (aproximadamente)
 /*!40000 ALTER TABLE `areas` DISABLE KEYS */;
 INSERT INTO `areas` (`id`, `parent_id`, `appear`, `controller`, `controller_label`, `action`, `action_label`) VALUES
 	(1, NULL, 1, 'Users', 'Usu&aacute;rios', 'index', 'Todos'),
@@ -38,7 +38,8 @@ INSERT INTO `areas` (`id`, `parent_id`, `appear`, `controller`, `controller_labe
 	(9, NULL, 0, 'Profiles', 'Perf&iacute;s de Usu&aacute;rio', 'view', 'Visualizar'),
 	(10, NULL, 0, 'Users', 'Usu&aacute;rios', 'view', 'Visualizar'),
 	(11, NULL, 1, 'Repositories', 'Reposit&oacute;rios', 'index', 'Todos'),
-	(12, NULL, 0, 'Repositories', 'Reposit&oacute;rios', 'add', 'Enviar');
+	(12, NULL, 0, 'Repositories', 'Reposit&oacute;rios', 'add', 'Enviar'),
+	(13, NULL, 0, 'Settings', 'Configura&ccedil;&otilde;es', 'index', 'Configura&ccedil;&atilde;o');
 /*!40000 ALTER TABLE `areas` ENABLE KEYS */;
 
 
@@ -52,28 +53,29 @@ CREATE TABLE IF NOT EXISTS `areas_profiles` (
   KEY `profile_area_idx` (`profile_id`),
   CONSTRAINT `area_area_profile` FOREIGN KEY (`area_id`) REFERENCES `areas` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `profile_area` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=55 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela cordel.areas_profiles: ~17 rows (aproximadamente)
+-- Copiando dados para a tabela cordel.areas_profiles: ~18 rows (aproximadamente)
 /*!40000 ALTER TABLE `areas_profiles` DISABLE KEYS */;
 INSERT INTO `areas_profiles` (`id`, `area_id`, `profile_id`) VALUES
-	(30, 1, 1),
+	(42, 1, 1),
 	(25, 1, 2),
-	(31, 2, 1),
+	(43, 2, 1),
 	(26, 2, 2),
-	(32, 3, 1),
+	(44, 3, 1),
 	(27, 3, 2),
-	(33, 4, 1),
+	(45, 4, 1),
 	(28, 4, 2),
-	(35, 5, 1),
-	(36, 6, 1),
-	(37, 7, 1),
-	(38, 8, 1),
-	(39, 9, 1),
-	(34, 10, 1),
+	(47, 5, 1),
+	(48, 6, 1),
+	(49, 7, 1),
+	(50, 8, 1),
+	(51, 9, 1),
+	(46, 10, 1),
 	(29, 10, 2),
-	(40, 11, 1),
-	(41, 12, 1);
+	(52, 11, 1),
+	(53, 12, 1),
+	(54, 13, 1);
 /*!40000 ALTER TABLE `areas_profiles` ENABLE KEYS */;
 
 
@@ -89,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `profiles` (
 -- Copiando dados para a tabela cordel.profiles: ~2 rows (aproximadamente)
 /*!40000 ALTER TABLE `profiles` DISABLE KEYS */;
 INSERT INTO `profiles` (`id`, `name`, `created`, `modified`) VALUES
-	(1, 'Admin', '0000-00-00 00:00:00', '2015-12-02 15:18:47'),
+	(1, 'Admin', '0000-00-00 00:00:00', '2015-12-03 03:29:22'),
 	(2, 'Perfil Teste', '2012-03-25 00:21:45', '2012-04-02 17:09:38');
 /*!40000 ALTER TABLE `profiles` ENABLE KEYS */;
 
@@ -111,6 +113,28 @@ CREATE TABLE IF NOT EXISTS `repositories` (
 /*!40000 ALTER TABLE `repositories` ENABLE KEYS */;
 
 
+-- Copiando estrutura para tabela cordel.settings
+CREATE TABLE IF NOT EXISTS `settings` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `wellcome_text` text,
+  `email_admin` varchar(50) DEFAULT NULL,
+  `email_contact` varchar(50) DEFAULT NULL,
+  `phone` varchar(50) DEFAULT NULL,
+  `cell_phone` varchar(100) DEFAULT NULL,
+  `facebook_link` varchar(100) DEFAULT NULL,
+  `twitter_link` varchar(100) DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+-- Copiando dados para a tabela cordel.settings: ~1 rows (aproximadamente)
+/*!40000 ALTER TABLE `settings` DISABLE KEYS */;
+INSERT INTO `settings` (`id`, `wellcome_text`, `email_admin`, `email_contact`, `phone`, `cell_phone`, `facebook_link`, `twitter_link`, `created`, `modified`) VALUES
+	(1, '<h1><strong>Seja bem vindo</strong></h1>\r\n\r\n<p><strong>Agora, v&aacute; trabalhar!!</strong></p>\r\n', 'domingos.adj@gmail.com', 'cordel@cordel.com', '(98) 98886-7984', '(98) 98886-7981', 'fb.me/dowingows', 'twitter.me/dowingows', '2015-12-03 02:59:11', '2015-12-03 03:52:04');
+/*!40000 ALTER TABLE `settings` ENABLE KEYS */;
+
+
 -- Copiando estrutura para tabela cordel.users
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -128,10 +152,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   CONSTRAINT `users_profiles` FOREIGN KEY (`profile_id`) REFERENCES `profiles` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
--- Copiando dados para a tabela cordel.users: ~2 rows (aproximadamente)
+-- Copiando dados para a tabela cordel.users: ~3 rows (aproximadamente)
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `profile_id`, `password`, `name`, `email`, `last_login`, `pass_switched`, `created`, `modified`) VALUES
-	(1, 1, 'a78f76a37a7f699f39b324ba58b2aad5', 'Administrador', 'admin', '2015-12-03 02:20:07', 1, '0000-00-00 00:00:00', '2015-12-03 02:20:07'),
+	(1, 1, 'a78f76a37a7f699f39b324ba58b2aad5', 'Administrador', 'admin', '2015-12-03 03:55:22', 1, '0000-00-00 00:00:00', '2015-12-03 03:55:22'),
 	(5, 2, '9bc5f2b8fb63d9ec807dc1d6e35ebf6e', 'Teste', 'teste@teste.com', '2012-04-02 22:41:30', 1, '2012-03-23 15:49:04', '2012-04-02 22:41:30');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
