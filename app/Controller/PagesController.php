@@ -50,7 +50,7 @@ class PagesController extends AppController {
  *
  * @var array
  */
-	public $uses = array();
+	public $uses = array('Setting');
 
 /**
  * Displays a view
@@ -76,7 +76,14 @@ class PagesController extends AppController {
 		if (!empty($path[$count - 1])) {
 			$title_for_layout = Inflector::humanize($path[$count - 1]);
 		}
-		$this->set(compact('page', 'subpage', 'title_for_layout'));
+                
+                
+                $setting = $this->Setting->find('first');
+		
+                $this->set('setting',$setting);
+                $this->set(compact('page', 'subpage', 'title_for_layout'));
+                
+                
 		$this->render(implode('/', $path));
 	}
 }

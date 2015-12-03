@@ -7,7 +7,7 @@ class Setting extends AppModel {
 
     public $name = 'Setting';
     public $label = 'Configura&ccedil;&atilde;o';
-
+    public $gender = 'a';
     /* ----------------------------------------
      * Associations
       ---------------------------------------- */
