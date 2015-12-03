@@ -10,7 +10,7 @@ class Repository extends AppModel {
     private $folder = 'files';
     private $fieldName = 'file';
     public $allowedExt = array('jpg', 'png');
-    public $lastFile = "";
+
     /* ----------------------------------------
      * Associations
       ---------------------------------------- */
@@ -89,7 +89,7 @@ class Repository extends AppModel {
         $file = $this->findById($repository_id);
 
         if (!empty($file)) {
-            $link = $file['Repository']['file_name'];
+            $link = $this->folder.DS.$file['Repository']['file_name'];
         }
 
         return $link;

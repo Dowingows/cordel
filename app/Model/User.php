@@ -1,236 +1,208 @@
 <?php
 
 class User extends AppModel {
-	
-	/*----------------------------------------
-	 * Atributtes
-	 ----------------------------------------*/ 
-	
-	public $name 			=	'User';
+    /* ----------------------------------------
+     * Atributtes
+      ---------------------------------------- */
 
-	public $label			=	'Usuário';
-	
-	/*----------------------------------------
-	 * Associations
-	 ----------------------------------------*/ 
-	
-	public $belongsTo 		= 	array( 'Profile' );
-	
-	/*----------------------------------------
-	 * Validation
-	 ----------------------------------------*/
-	
-	public $validate 		= 	array(
-		
-		'name' 	=> array(
-			
-			'rule'		=> 'notEmpty',
-			'message'	=> 'Preencha Nome'
-		),
-		
-		'email' => array(
-		
-			'notEmpty' 	=> array(
-				'rule'		=> 'notEmpty',
-				'message'	=> 'Preencha Email'
-			),
+    public $name = 'User';
+    public $label = 'Usuário';
 
-			'email'	=> array(
-				'rule'		=> 'email',
-				'message'	=> 'Email inválido'
-			),
+    /* ----------------------------------------
+     * Associations
+      ---------------------------------------- */
+    public $belongsTo = array('Profile');
 
-			'isUnique'	=> array(
-				'rule'		=> 'isUnique',
-				'message'	=> 'Este email já está cadastrado'
-			)
-		),
+    /* ----------------------------------------
+     * Validation
+      ---------------------------------------- */
+    public $validate = array(
+        'name' => array(
+            'rule' => 'notBlank',
+            'message' => 'Preencha Nome'
+        ),
+        'email' => array(
+            'notEmpty' => array(
+                'rule' => 'notBlank',
+                'message' => 'Preencha Email'
+            ),
+            'email' => array(
+                'rule' => 'email',
+                'message' => 'Email inválido'
+            ),
+            'isUnique' => array(
+                'rule' => 'isUnique',
+                'message' => 'Este email já está cadastrado'
+            )
+        ),
+        'profile_id' => array(
+            'notEmpty' => array(
+                'rule' => 'notBlank',
+                'message' => 'Selecione um Perfil'
+            ),
+            'adminProfile' => array(
+                'rule' => 'adminProfile',
+                'message' => 'Você não pode criar usuários com Perfil Administrador'
+            )
+        ),
+        'password' => array(
+            'notEmpty' => array(
+                'rule' => 'passNotEmpty',
+                'message' => 'Preencha com sua senha atual'
+            ),
+            'currentPassword' => array(
+                'rule' => 'currentPassword',
+                'message' => 'Senha incorreta'
+            )
+        ),
+        'newPassword' => array(
+            'newPassNotEmpty' => array(
+                'rule' => 'newPassNotEmpty',
+                'message' => 'Preencha sua nova senha'
+            ),
+            'newPassNotSame' => array(
+                'rule' => 'newPassNotSame',
+                'message' => 'Sua nova senha não pode ser igual a senha antiga'
+            ),
+            'between' => array(
+                'rule' => array('between', 6, 20),
+                'message' => 'Senha deve conter entre 6 e 20 caracteres',
+                'allowEmpty' => true
+            ),
+            'alphanumeric' => array(
+                'rule' => 'alphanumeric',
+                'message' => 'Senha deve conter apenas letras e/ou números (sem acentuação ou caracteres especiais)',
+                'allowEmpty' => true
+            )
+        ),
+        'passwordConfirm' => array(
+            'rule' => 'passwordConfirm',
+            'message' => 'Senha de Confirmação não confere'
+        )
+    );
 
-		'profile_id' => array(
-			
-			'notEmpty' => array(
-				'rule' => 'notEmpty',
-				'message' => 'Selecione um Perfil'
-			),
+    public function passwordConfirm($check) {
 
-			'adminProfile' => array(
-				'rule' => 'adminProfile',
-				'message' => 'Você não pode criar usuários com Perfil Administrador'
-			)
-		),
+        return array_pop($check) == $this->data[$this->name]['newPassword'];
+    }
 
-		'password' => array(
+    public function currentPassword($check) {
 
-			'notEmpty' => array(
-				'rule'	=>	'passNotEmpty',
-				'message'	=>	'Preencha com sua senha atual'
-			),
+        $currentPassword = $this->field('password');
+        return AuthComponent::password(array_pop($check)) == $currentPassword;
+    }
 
-			'currentPassword' => array(
-				'rule'	=>	'currentPassword',
-				'message'	=>	'Senha incorreta'
-			)
-		),
-		
-		'newPassword' => array(
-		
-			'newPassNotEmpty' => array(
-				
-				'rule' => 'newPassNotEmpty',
-				'message' => 'Preencha sua nova senha'
-			),
+    public function passNotEmpty($check) {
 
-			'newPassNotSame' => array(
-				
-				'rule' => 'newPassNotSame',
-				'message' => 'Sua nova senha não pode ser igual a senha antiga'
-			),
+        return array_pop($check) != '';
+    }
 
-			'between' => array(
-	
-				'rule' => array( 'between', 6, 20 ),
-				'message' => 'Senha deve conter entre 6 e 20 caracteres',
-				'allowEmpty' => true
-			),
+    public function newPassNotEmpty($check) {
 
-			'alphanumeric' => array(
-	
-				'rule' => 'alphanumeric',
-				'message' => 'Senha deve conter apenas letras e/ou números (sem acentuação ou caracteres especiais)',
-				'allowEmpty' => true
-			)
-		),
+        if (isset($this->_passSwitched)) {
 
-		'passwordConfirm'	=>	array(
-				
-			'rule'	=>	'passwordConfirm',
-			'message'	=>	'Senha de Confirmação não confere'
-		)
-	);
+            if (!$this->_passSwitched) {
 
-	public function passwordConfirm( $check ){
-		
-		return array_pop( $check ) == $this->data[ $this->name ][ 'newPassword' ];
-	}
-	
-	public function currentPassword( $check ){
-		
-		$currentPassword = $this->field( 'password' );
-		return AuthComponent::password( array_pop( $check ) ) == $currentPassword;
-	}
+                $value = array_pop($check);
+                return !empty($value);
+            }
+        }
 
-	public function passNotEmpty( $check ){
-		
-		return array_pop( $check ) != '';
-	}
+        return true;
+    }
 
-	public function newPassNotEmpty( $check ){
+    public function newPassNotSame($check) {
 
-		if( isset( $this->_passSwitched ) ){
+        if (isset($this->_passSwitched)) {
 
-			if( !$this->_passSwitched ){
+            if (!$this->_passSwitched) {
 
-				$value = array_pop( $check );
-				return !empty( $value );
-			}
-		}
-		
-		return true;
-	}
-	
-	public function newPassNotSame( $check ){
+                $currentPassword = $this->field('password');
+                return AuthComponent::password(array_pop($check)) != $currentPassword;
+            }
+        }
 
-		if( isset( $this->_passSwitched ) ){
-			
-			if( !$this->_passSwitched ){
-				
-				$currentPassword = $this->field( 'password' );
-				return AuthComponent::password( array_pop( $check ) ) != $currentPassword;
-			}
-		}
-		
-		return true;
-	}
+        return true;
+    }
 
-	public function adminProfile( $check ){
-		
-		if( !$this->isAdmin() )
-			return array_pop( $check ) != Configure::read( 'AdminProfileId' );
+    public function adminProfile($check) {
 
-		return true;
-	}
+        if (!$this->isAdmin())
+            return array_pop($check) != Configure::read('AdminProfileId');
 
-	/*----------------------------------------
-	 * Methods
-	 ----------------------------------------*/
-	
-	public function lastLogin( $user_id ){
-		
-		$this->id = $user_id;
-		$this->saveField( 'last_login', date('Y-m-d H:i:s') );
-	}
+        return true;
+    }
 
-	public static function isAdmin( $profile_id = null ){
+    /* ----------------------------------------
+     * Methods
+      ---------------------------------------- */
 
-		if( !$profile_id )
-			$profile_id = AuthComponent::user( 'profile_id' );
+    public function lastLogin($user_id) {
 
-		return $profile_id == Configure::read( 'AdminProfileId' );
-	}
+        $this->id = $user_id;
+        $this->saveField('last_login', date('Y-m-d H:i:s'));
+    }
 
-	public static function isAdminUser( $user_id = null ){
+    public static function isAdmin($profile_id = null) {
 
-		if( !$user_id )
-			$user_id = AuthComponent::user( 'id' );
+        if (!$profile_id)
+            $profile_id = AuthComponent::user('profile_id');
 
-		return $user_id == Configure::read( 'AdminUserId' );
-	}
+        return $profile_id == Configure::read('AdminProfileId');
+    }
 
-	/*----------------------------------------
-	 * Callbacks
-	 ----------------------------------------*/
+    public static function isAdminUser($user_id = null) {
 
-	public function beforeValidate( $options = array() ){
+        if (!$user_id)
+            $user_id = AuthComponent::user('id');
 
-		if( array_key_exists( 'pass_switched', $options ) ){
+        return $user_id == Configure::read('AdminUserId');
+    }
 
-			$this->_passSwitched = $options[ 'pass_switched' ];
+    /* ----------------------------------------
+     * Callbacks
+      ---------------------------------------- */
 
-			if( !$this->_passSwitched ){
+    public function beforeValidate($options = array()) {
 
-				$this->validate[ 'newPassword' ][ 'alphanumeric' ][ 'allowEmpty' ] = false;
-				$this->validate[ 'newPassword' ][ 'between' ][ 'allowEmpty' ] = false;
-			}
-		}
+        if (array_key_exists('pass_switched', $options)) {
 
-		return true;
-	}
-	
-	public function beforeSave($options = array()){
+            $this->_passSwitched = $options['pass_switched'];
 
-		if( !$this->id )
-			$this->data[ $this->name ][ 'password' ] = AuthComponent::password( '123456' );
+            if (!$this->_passSwitched) {
 
-		elseif( !empty( $this->data[ $this->name ][ 'newPassword' ] ) ){
+                $this->validate['newPassword']['alphanumeric']['allowEmpty'] = false;
+                $this->validate['newPassword']['between']['allowEmpty'] = false;
+            }
+        }
 
-			$this->data[ $this->name ][ 'password' ] = AuthComponent::password( $this->data[ $this->name ][ 'newPassword' ] );
-			unset( $this->data[ $this->name ][ 'newPassword' ] );
+        return true;
+    }
 
-			if( !empty( $this->data[ $this->name ][ 'passwordConfirm' ] ) )
-				unset( $this->data[ $this->name ][ 'passwordConfirm' ] );
+    public function beforeSave($options = array()) {
 
-			if( isset( $this->_passSwitched ) )
-				if( !$this->_passSwitched )
-					$this->_passSwitched = $this->data[ $this->name ][ 'pass_switched' ] = '1';
+        if (!$this->id)
+            $this->data[$this->name]['password'] = AuthComponent::password('123456');
 
-		} elseif( isset( $this->data[ $this->name ][ 'password' ] ) )
-			unset( $this->data[ $this->name ][ 'password' ] );
+        elseif (!empty($this->data[$this->name]['newPassword'])) {
 
-		if( isset( $this->data[ $this->name ][ 'pass_switched' ] ) )
-			if( !$this->data[ $this->name ][ 'pass_switched' ] )
-				unset( $this->data[ $this->name ][ 'pass_switched' ] );
-		
-		return true;
-	}
-	
+            $this->data[$this->name]['password'] = AuthComponent::password($this->data[$this->name]['newPassword']);
+            unset($this->data[$this->name]['newPassword']);
+
+            if (!empty($this->data[$this->name]['passwordConfirm']))
+                unset($this->data[$this->name]['passwordConfirm']);
+
+            if (isset($this->_passSwitched))
+                if (!$this->_passSwitched)
+                    $this->_passSwitched = $this->data[$this->name]['pass_switched'] = '1';
+        } elseif (isset($this->data[$this->name]['password']))
+            unset($this->data[$this->name]['password']);
+
+        if (isset($this->data[$this->name]['pass_switched']))
+            if (!$this->data[$this->name]['pass_switched'])
+                unset($this->data[$this->name]['pass_switched']);
+
+        return true;
+    }
+
 }

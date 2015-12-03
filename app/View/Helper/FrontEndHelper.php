@@ -150,7 +150,7 @@ class FrontEndHelper extends AppHelper {
         
         $repository = new Repository();
 
-        return $this->Html->url($repository->getImageUrl($repository_id),TRUE);
+        return $this->Html->url("/".$repository->getImageUrl($repository_id),TRUE);
     }
 
 }
